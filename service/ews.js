@@ -98,7 +98,8 @@ let createJson = () => {
                         tambon_e,
                         amphoe_e,
                         province_e,
-                        dept_e
+                        dept_e,
+                        dt
                     )VALUES(
                         '${i.stn}',
                         '${i.name}',
@@ -120,7 +121,8 @@ let createJson = () => {
                         '${i.tambon_e}',
                         '${i.amphoe_e}',
                         '${i.province_e}',
-                        '${i.dept_e}'
+                        '${i.dept_e}',
+                        now()
                     )`
             // console.log(sql);
             dat.query(sql)
@@ -140,7 +142,6 @@ let createJson = () => {
 // })
 
 
-
 // promis.then(() => {
 //     createJson()
 // });
@@ -151,12 +152,19 @@ setInterval(() => {
     let mm = currentDate.getMinutes();
     let ss = currentDate.getSeconds();
     let t = `${hh}:${mm}:${ss}`;
-    // console.log(hh, mm, ss);
-    if (t == "9:48:50" || t == "11:25:0" || t == "14:25:0" || t == "17:25:0" || t == "20:25:0" || t == "23:25:0" || t == "2:25:0" || t == "5:25:0") {
+    console.log(hh, mm, ss);
+
+    if (t == "9:52:50" || t == "18:30:0") {
         promis.then(() => {
             createJson()
         });
     }
+
+    // if (t == "8:25:50" || t == "11:25:0" || t == "14:25:0" || t == "17:25:0" || t == "20:25:0" || t == "23:25:0" || t == "2:25:0" || t == "5:25:0") {
+    //     promis.then(() => {
+    //         createJson()
+    //     });
+    // }
 
 }, 1000);
 
