@@ -124,9 +124,9 @@ let createJson = () => {
                         '${i.dept_e}',
                         now()
                     )`
-            // console.log(sql);
+            console.log(sql);
             dat.query(sql)
-            return "success"
+            // return "success"
         })
 
         Promise.all(promisInsert).then((r) => {
