@@ -3,10 +3,12 @@ const app = express.Router();
 const con = require("./db");
 const dat = con.dat;
 
+
 require('events').EventEmitter.defaultMaxListeners = Infinity;
 
 const fs = require('fs')
-var http = require('http');
+const http = require('http');
+const { default: axios } = require('axios');
 
 const ews_data = "./service/ews_data.txt";
 const promis = new Promise((resolve, reject) => {
@@ -27,11 +29,6 @@ const promis = new Promise((resolve, reject) => {
         console.log("Error: " + err.message);
     });
 }, err => reject(err))
-
-let insertData = () => {
-
-}
-
 
 let createJson = () => {
     fs.readFile(ews_data, 'utf8', async (err, res) => {
@@ -142,9 +139,38 @@ let createJson = () => {
 // })
 
 
-// promis.then(() => {
-//     createJson()
-// });
+let loadRain24Hr = () => {
+    axios.get('http://api2.thaiwater.net:9200/api/v1/thaiwater30/public/rain_24h').then(r => {
+        let d = r.data;
+        // console.log(dat);
+        let promisInsert = d.data.map(i => {
+            let sql = `INSERT INTO rain24hr(
+                agency_name,tam_name,amp_name,prov_name,sta_id,tele_station_name,tele_station_oldcode,lat,lon,dt,rain24hr
+            )VALUES(
+                '${i.agency.agency_name.th}',
+                '${i.geocode.tumbon_name.th}',
+                '${i.geocode.amphoe_name.th}',
+                '${i.geocode.province_name.th}',
+                ${i.station.id},
+                '${i.station.tele_station_name.th}',
+                '${i.station.tele_station_oldcode}',
+                ${i.station.tele_station_lat},
+                ${i.station.tele_station_long},
+                '${i.rainfall_datetime}',
+                ${i.rain_24h}
+            )`
+
+            dat.query(sql);
+            return 'success'
+        })
+
+        Promise.all(promisInsert).then((r) => {
+            console.log(r);
+        })
+    })
+}
+
+// loadRain24Hr()
 
 setInterval(() => {
     let currentDate = new Date();
